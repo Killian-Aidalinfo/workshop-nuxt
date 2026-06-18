@@ -31,7 +31,7 @@ jobs:
       - name: Login to registry
         env:
           SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
-        run: docker login ${{ env.REGISTRY }} -u nologin -p "$SCW_SECRET_KEY"
+        run: echo "$SCW_SECRET_KEY" | docker login ${{ env.REGISTRY }} -u nologin --password-stdin
 
       - name: Ensure git tag does not already exist
         timeout-minutes: 2
