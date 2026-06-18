@@ -20,6 +20,14 @@
                 "mcp-remote",
                 "https://mcp.better-auth.com/mcp"
             ]
+        },
+        "mastra": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@mastra/mcp-docs-server@latest"
+            ]
         }
     }
 }
