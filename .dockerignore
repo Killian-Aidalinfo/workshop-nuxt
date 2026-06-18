@@ -1,0 +1,8 @@
+**/node_modules
+**/.nuxt
+**/.output
+**/.mastra/output
+**/dist
+**/.env
+**/.env.*
+!**/.env.example
