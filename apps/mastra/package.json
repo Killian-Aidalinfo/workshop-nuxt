@@ -11,7 +11,7 @@
     "@ai-sdk/openai-compatible": "^2.0.51",
     "@mastra/core": "^1.43.0",
     "ai": "^6.0.207",
-    "undici": "^8.5.0",
+    "undici": "^7.28.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
