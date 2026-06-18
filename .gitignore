@@ -3,6 +3,7 @@ node_modules/
 .output/
 dist/
 .env
+apps/**/.env
 uploads/
 *.log
 .DS_Store
