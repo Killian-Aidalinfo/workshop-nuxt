@@ -8,11 +8,13 @@
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^2.0.51",
-    "@mastra/core": "^0.10.0",
-    "ai": "^6.0.207"
+    "@mastra/core": "^1.43.0",
+    "ai": "^6.0.207",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
-    "mastra": "^0.10.0",
+    "@types/node": "^25.9.3",
+    "mastra": "^1.14.0",
     "typescript": "^5.5.0"
   }
 }
