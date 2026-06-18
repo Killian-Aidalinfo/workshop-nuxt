@@ -1,7 +1,12 @@
 import { updateDocumentStatus } from './documents'
-import { mastraClient } from './mastra-client'
+import { getMastraClient } from './mastra-client'
 
 type StepOutput = Record<string, unknown>
+export type Provider = 'scaleway' | 'ollama'
+
+export function parseProvider(value: unknown): Provider {
+  return value === 'ollama' ? 'ollama' : 'scaleway'
+}
 
 function serializeValue(value: unknown, indent = ''): string {
   if (value === null || value === undefined) return ''
@@ -28,7 +33,14 @@ function serializeValue(value: unknown, indent = ''): string {
   return String(value)
 }
 
-function extractTextFromResult(steps: Record<string, { output?: StepOutput }>): string {
+export type ExtractionResult = {
+  /** Version texte lisible, dérivée de la sortie structurée. */
+  text: string
+  /** Sortie structurée brute du workflow (objet/typé selon le document). */
+  data: unknown
+}
+
+function extractFromResult(steps: Record<string, { output?: StepOutput }>): ExtractionResult {
   // Trouver la première step qui n'est pas la classification (step-1)
   const contentStep = Object.entries(steps)
     .filter(([id]) => id !== 'step-1' && id !== 'input')
@@ -36,7 +48,7 @@ function extractTextFromResult(steps: Record<string, { output?: StepOutput }>): 
 
   if (contentStep) {
     const [, step] = contentStep
-    return serializeValue(step.output)
+    return { text: serializeValue(step.output), data: step.output ?? null }
   }
 
   // Fallback : info de classification depuis step-1
@@ -44,28 +56,39 @@ function extractTextFromResult(steps: Record<string, { output?: StepOutput }>): 
     | { type: string; confidence: number }
     | undefined
   if (classification) {
-    return `Type de document : ${classification.type} (confiance : ${Math.round(classification.confidence * 100)}%)`
+    return {
+      text: `Type de document : ${classification.type} (confiance : ${Math.round(classification.confidence * 100)}%)`,
+      data: { typeOfImg: classification },
+    }
   }
 
-  return 'Extraction terminée — aucun contenu structuré trouvé.'
+  return { text: 'Extraction terminée — aucun contenu structuré trouvé.', data: null }
 }
 
-export async function extractTextFromDocument(documentId: string, filename: string): Promise<void> {
+export async function runExtraction(
+  fileUrl: string,
+  provider: Provider = 'scaleway',
+): Promise<ExtractionResult> {
+  const workflow = getMastraClient().getWorkflow('test-workflow')
+  const run = await workflow.createRun()
+  const result = await run.startAsync({ inputData: { urlFile: fileUrl, provider } }) as {
+    steps?: Record<string, { output?: StepOutput }>
+  }
+  return extractFromResult(result.steps ?? {})
+}
+
+export async function extractTextFromDocument(
+  documentId: string,
+  filename: string,
+  provider: Provider = 'scaleway',
+): Promise<void> {
   await updateDocumentStatus(documentId, 'processing')
 
   try {
     const appUrl = process.env.NUXT_PUBLIC_APP_URL || 'http://localhost:3000'
     const fileUrl = `${appUrl}/api/files/${filename}`
-
-    const workflow = mastraClient.getWorkflow('test-workflow')
-    const run = await workflow.createRun()
-    const result = await run.startAsync({ inputData: { urlFile: fileUrl } }) as {
-      steps?: Record<string, { output?: StepOutput }>
-    }
-
-    const steps = result.steps ?? {}
-    const extractedText = extractTextFromResult(steps)
-    await updateDocumentStatus(documentId, 'done', extractedText)
+    const { text, data } = await runExtraction(fileUrl, provider)
+    await updateDocumentStatus(documentId, 'done', text, data)
   } catch (error) {
     await updateDocumentStatus(documentId, 'error')
     throw error

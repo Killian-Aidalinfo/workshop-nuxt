@@ -1,4 +1,5 @@
 import { prisma } from './prisma'
+import { Prisma } from '@prisma/client'
 import type { Document, DocumentStatus } from '@prisma/client'
 
 export type CreateDocumentInput = {
@@ -28,12 +29,16 @@ export async function updateDocumentStatus(
   id: string,
   status: DocumentStatus,
   extractedText?: string,
+  extractedData?: unknown,
 ): Promise<Document> {
   return prisma.document.update({
     where: { id },
     data: {
       status,
       ...(extractedText !== undefined ? { extractedText } : {}),
+      ...(extractedData !== undefined
+        ? { extractedData: (extractedData ?? Prisma.JsonNull) as Prisma.InputJsonValue }
+        : {}),
     },
   })
 }

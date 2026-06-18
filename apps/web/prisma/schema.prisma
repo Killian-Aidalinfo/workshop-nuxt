@@ -16,6 +16,10 @@ model User {
   image         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  role          String?
+  banned        Boolean?
+  banReason     String?
+  banExpires    DateTime?
 
   sessions  Session[]
   accounts  Account[]
@@ -25,14 +29,15 @@ model User {
 }
 
 model Session {
-  id        String   @id @default(cuid())
-  userId    String
-  token     String   @unique
-  expiresAt DateTime
-  ipAddress String?
-  userAgent String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String   @id @default(cuid())
+  userId         String
+  token          String   @unique
+  expiresAt      DateTime
+  ipAddress      String?
+  userAgent      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  impersonatedBy String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -80,6 +85,7 @@ model Document {
   size          Int
   status        DocumentStatus @default(pending)
   extractedText String?
+  extractedData Json?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 

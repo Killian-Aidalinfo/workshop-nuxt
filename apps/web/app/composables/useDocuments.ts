@@ -9,6 +9,7 @@ export interface Document {
   size: number
   status: DocumentStatus
   extractedText: string | null
+  extractedData: unknown
   createdAt: string
   updatedAt: string
 }
@@ -18,6 +19,7 @@ export function useDocuments() {
   const selectedDocument = useState<Document | null>('selectedDocument', () => null)
   const loading = ref(false)
   const toast = useToast()
+  const { provider } = useProvider()
 
   async function fetchDocuments(): Promise<void> {
     loading.value = true
@@ -32,6 +34,7 @@ export function useDocuments() {
   async function uploadDocument(file: File): Promise<void> {
     const formData = new FormData()
     formData.append('file', file)
+    formData.append('provider', provider.value)
 
     const data = await $fetch<{ document: Document }>('/api/documents/upload', {
       method: 'POST',
@@ -60,6 +63,7 @@ export function useDocuments() {
   async function retryExtraction(id: string): Promise<void> {
     const data = await $fetch<{ document: Document }>(`/api/documents/${id}/extract`, {
       method: 'POST',
+      body: { provider: provider.value },
     })
     if (data.document) {
       updateDocumentInList(data.document)

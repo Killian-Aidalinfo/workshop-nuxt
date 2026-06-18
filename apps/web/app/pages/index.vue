@@ -1,6 +1,7 @@
 <script setup lang="ts">
-const { selectedDocument, retryExtraction } = useDocuments()
-const showUploadModal = ref(false)
+const { documents, selectedDocument, retryExtraction } = useDocuments()
+const { abMode } = useAbTest()
+const showUpload = useState<boolean>('showUpload', () => false)
 
 function handleRetry() {
   if (selectedDocument.value) {
@@ -10,72 +11,85 @@ function handleRetry() {
 </script>
 
 <template>
-  <div class="flex h-full w-full overflow-hidden">
-    <!-- Sidebar: document list -->
-    <aside class="w-72 shrink-0 flex flex-col border-r dark:border-gray-700 bg-white dark:bg-gray-800">
-      <div class="px-4 py-3 border-b dark:border-gray-700 flex items-center justify-between shrink-0">
-        <h2 class="font-semibold text-sm">Documents</h2>
-        <UButton
-          size="xs"
-          icon="i-lucide-plus"
-          data-testid="upload-open-btn"
-          @click="showUploadModal = true"
-        >
-          Ajouter
-        </UButton>
+  <div class="page">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="side-head">
+        <span class="side-title">// documents</span>
+        <span class="side-count">{{ documents.length }}</span>
       </div>
-      <DocumentList class="flex-1 overflow-hidden" />
+      <DocumentList class="side-list" />
+      <div class="side-foot">workshop-nuxt · v0.1.0</div>
     </aside>
 
-    <!-- Main area: viewer + extracted text -->
-    <div class="flex-1 flex overflow-hidden">
-      <template v-if="selectedDocument">
-        <!-- Left: document preview (50%) -->
-        <div class="flex-1 flex flex-col overflow-hidden">
-          <div class="px-4 py-2 border-b dark:border-gray-700 bg-white dark:bg-gray-800 shrink-0">
-            <p class="text-sm font-medium truncate" data-testid="selected-doc-name">
-              {{ selectedDocument.originalName }}
-            </p>
-          </div>
-          <DocumentViewer :document="selectedDocument" />
-        </div>
-
-        <!-- Right: extracted text (50%) -->
-        <div class="flex-1 flex flex-col overflow-hidden">
-          <ExtractedTextPanel
-            :document="selectedDocument"
-            @retry="handleRetry"
-          />
-        </div>
-      </template>
-
-      <!-- Empty state -->
-      <div
+    <!-- VIEWER + EXTRACTED PANEL -->
+    <template v-if="selectedDocument">
+      <DocumentViewer :document="selectedDocument" @retry="handleRetry" />
+      <AbTestPanel v-if="abMode" :document="selectedDocument" />
+      <ExtractedTextPanel
         v-else
-        class="flex-1 flex flex-col items-center justify-center gap-4 text-gray-400"
-        data-testid="empty-state"
-      >
-        <UIcon name="i-lucide-file-text" class="text-5xl" />
-        <p>Sélectionnez ou uploadez un document</p>
-        <UButton
-          icon="i-lucide-plus"
-          data-testid="upload-open-btn-empty"
-          @click="showUploadModal = true"
-        >
-          Uploader un document
-        </UButton>
-      </div>
-    </div>
-  </div>
-
-  <!-- Upload modal -->
-  <UModal
-    v-model:open="showUploadModal"
-    title="Uploader un document"
-    data-testid="upload-modal"
-  >
-    <template #body>
-      <UploadModal @close="showUploadModal = false" />
+        :document="selectedDocument"
+        @retry="handleRetry"
+      />
     </template>
-  </UModal>
+
+    <!-- EMPTY STATE -->
+    <div v-else class="empty" data-testid="empty-state">
+      <div class="empty-glyph">⌁</div>
+      <div class="empty-title">// aucun document sélectionné</div>
+      <div class="empty-desc">Sélectionnez un document ou uploadez-en un nouveau.</div>
+      <button class="empty-btn" data-testid="upload-open-btn-empty" @click="showUpload = true">
+        <span class="plus">+</span> upload un document
+      </button>
+    </div>
+
+    <!-- UPLOAD MODAL -->
+    <UploadModal v-if="showUpload" data-testid="upload-modal" @close="showUpload = false" />
+  </div>
 </template>
+
+<style scoped>
+.page { flex: 1; display: flex; overflow: hidden; min-width: 0; }
+
+/* SIDEBAR */
+.sidebar {
+  width: 252px; background: var(--bg-shell);
+  border-right: 1px solid var(--bd-subtle);
+  display: flex; flex-direction: column; flex-shrink: 0;
+}
+.side-head {
+  padding: 12px 14px 10px; border-bottom: 1px solid var(--bd-inner);
+  display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+}
+.side-title {
+  font-size: 9px; font-weight: 700; color: var(--tx-muted);
+  letter-spacing: 0.14em; text-transform: uppercase;
+}
+.side-count {
+  font-size: 9px; color: var(--tx-muted); background: var(--bg-viewer);
+  border: 1px solid var(--bd-subtle); padding: 1px 7px; border-radius: 3px;
+}
+.side-list { flex: 1; overflow: hidden; }
+.side-foot {
+  padding: 10px 14px; border-top: 1px solid var(--bd-inner); flex-shrink: 0;
+  font-size: 9px; color: var(--tx-footer); letter-spacing: 0.06em;
+}
+
+/* EMPTY */
+.empty {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 12px; background: var(--bg-viewer);
+  animation: fadeIn 0.3s ease;
+}
+.empty-glyph { font-size: 44px; color: var(--tx-muted); line-height: 1; }
+.empty-title { font-size: 12px; font-weight: 700; color: var(--tx-secondary); letter-spacing: 0.08em; }
+.empty-desc { font-size: 11px; color: var(--tx-muted); }
+.empty-btn {
+  margin-top: 8px; display: flex; align-items: center; gap: 7px; padding: 8px 16px;
+  background: #2563eb; color: #fff; border: none; border-radius: 3px;
+  font-size: 11px; font-weight: 600; cursor: pointer; letter-spacing: 0.04em;
+  transition: background 0.15s;
+}
+.empty-btn:hover { background: #1d4ed8; }
+.plus { font-size: 15px; line-height: 1; font-weight: 300; }
+</style>

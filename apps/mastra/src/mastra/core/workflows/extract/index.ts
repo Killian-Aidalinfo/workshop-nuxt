@@ -8,7 +8,8 @@ export const testWorkflow = createWorkflow({
   id: "test-workflow",
   stateSchema: z.any(),
   inputSchema: z.object({
-    urlFile: z.string()
+    urlFile: z.string(),
+    provider: z.enum(["scaleway", "ollama"]).default("scaleway"),
   }),
   outputSchema: z.any(),
 })

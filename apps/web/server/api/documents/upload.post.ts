@@ -7,7 +7,7 @@ import {
   MAX_FILE_SIZE,
 } from '~/server/utils/storage'
 import { createDocument } from '~/server/utils/documents'
-import { extractTextFromDocument } from '~/server/utils/extraction'
+import { extractTextFromDocument, parseProvider } from '~/server/utils/extraction'
 
 export default defineEventHandler(async (event) => {
   const session = await auth.api.getSession({ headers: event.headers })
@@ -21,6 +21,9 @@ export default defineEventHandler(async (event) => {
   if (!filePart?.data || !filePart.filename) {
     throw createError({ statusCode: 400, statusMessage: 'Aucun fichier fourni' })
   }
+
+  const providerPart = formData?.find((f) => f.name === 'provider')
+  const provider = parseProvider(providerPart?.data?.toString())
 
   const mimeType = filePart.type ?? 'application/octet-stream'
 
@@ -49,7 +52,7 @@ export default defineEventHandler(async (event) => {
     size: filePart.data.length,
   })
 
-  extractTextFromDocument(document.id, filename).catch((err) => {
+  extractTextFromDocument(document.id, filename, provider).catch((err) => {
     console.error(`Extraction failed for document ${document.id}:`, err)
   })
 

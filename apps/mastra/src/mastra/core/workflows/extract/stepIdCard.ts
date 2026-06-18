@@ -1,6 +1,6 @@
 import { createStep } from "@mastra/core/workflows";
 import { z } from "zod";
-import { ocrAgent } from "../../agents/ocrAgents";
+import { createOcrAgent, type Provider } from "../../agents/factory";
 
 const idCardSchema = z.object({
   lastName: z.string(),
@@ -25,14 +25,16 @@ export const stepIdCard = createStep({
   id: "step-id-card",
   stateSchema: z.object({
     pages: z.array(z.any()),
+    provider: z.enum(["scaleway", "ollama"]).default("scaleway"),
   }),
   outputSchema: z.object({
     idCard: idCardSchema,
   }),
   execute: async ({ state }) => {
-    const { pages } = state;
+    const { pages, provider } = state;
+    const agent = createOcrAgent(provider as Provider);
 
-    const response = await ocrAgent.generate(
+    const response = await agent.generate(
       [
         {
           role: "user",

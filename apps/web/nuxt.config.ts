@@ -7,9 +7,10 @@ export default defineNuxtConfig({
   runtimeConfig: {
     betterAuthSecret: process.env.BETTER_AUTH_SECRET,
     openaiApiKey: process.env.OPENAI_API_KEY,
+    // URL de l'API Mastra (serveur uniquement) — surchargeable via NUXT_MASTRA_URL
+    mastraUrl: process.env.NUXT_MASTRA_URL || 'http://localhost:4111',
     public: {
       appUrl: process.env.NUXT_PUBLIC_APP_URL || 'http://localhost:3000',
-      mastraUrl: process.env.NUXT_PUBLIC_MASTRA_URL || 'http://localhost:4111',
     },
   },
   vite: {

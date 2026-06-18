@@ -1,5 +1,15 @@
 import { MastraClient } from '@mastra/client-js'
 
-export const mastraClient = new MastraClient({
-  baseUrl: process.env.NUXT_PUBLIC_MASTRA_URL || 'http://localhost:4111',
-})
+let client: MastraClient | null = null
+
+/**
+ * Client Mastra (serveur). La baseUrl provient du runtimeConfig Nuxt
+ * (`mastraUrl`), surchargeable par la variable d'env `NUXT_MASTRA_URL`.
+ */
+export function getMastraClient(): MastraClient {
+  if (!client) {
+    const { mastraUrl } = useRuntimeConfig()
+    client = new MastraClient({ baseUrl: mastraUrl })
+  }
+  return client
+}

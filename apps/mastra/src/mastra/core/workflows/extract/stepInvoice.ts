@@ -1,6 +1,6 @@
 import { createStep } from "@mastra/core/workflows";
 import { z } from "zod";
-import { ocrAgent } from "../../agents/ocrAgents";
+import { createOcrAgent, type Provider } from "../../agents/factory";
 
 const invoiceLineSchema = z.object({
   description: z.string(),
@@ -41,14 +41,16 @@ export const stepInvoice = createStep({
   id: "step-invoice",
   stateSchema: z.object({
     pages: z.array(z.any()),
+    provider: z.enum(["scaleway", "ollama"]).default("scaleway"),
   }),
   outputSchema: z.object({
     invoice: invoiceSchema,
   }),
   execute: async ({ state }) => {
-    const { pages } = state;
+    const { pages, provider } = state;
+    const agent = createOcrAgent(provider as Provider);
 
-    const response = await ocrAgent.generate(
+    const response = await agent.generate(
       [
         {
           role: "user",

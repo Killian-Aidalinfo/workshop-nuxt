@@ -48,7 +48,7 @@ test.describe('Document Viewer', () => {
   test('copy button appears when extraction is done', async ({ page }) => {
     await registerAndUpload(page)
     await expect(
-      page.locator('[data-testid^="doc-status-"]').filter({ hasText: 'Terminé' }),
+      page.locator('[data-testid^="doc-status-"]').filter({ hasText: '[OK]' }),
     ).toBeVisible({ timeout: 30000 })
     await expect(page.locator('[data-testid="copy-text-btn"]')).toBeVisible()
   })
@@ -58,11 +58,11 @@ test.describe('Document Viewer', () => {
     await registerAndUpload(page)
 
     await expect(
-      page.locator('[data-testid^="doc-status-"]').filter({ hasText: 'Terminé' }),
+      page.locator('[data-testid^="doc-status-"]').filter({ hasText: '[OK]' }),
     ).toBeVisible({ timeout: 30000 })
 
     await page.click('[data-testid="copy-text-btn"]')
-    await expect(page.locator('[data-testid="copy-text-btn"]')).toContainText('Copié', {
+    await expect(page.locator('[data-testid="copy-text-btn"]')).toContainText('copied', {
       timeout: 3000,
     })
   })

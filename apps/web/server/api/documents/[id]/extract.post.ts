@@ -1,6 +1,6 @@
 import { auth } from '~/server/utils/auth'
 import { getDocumentById, updateDocumentStatus } from '~/server/utils/documents'
-import { extractTextFromDocument } from '~/server/utils/extraction'
+import { extractTextFromDocument, parseProvider } from '~/server/utils/extraction'
 
 export default defineEventHandler(async (event) => {
   const session = await auth.api.getSession({ headers: event.headers })
@@ -12,9 +12,12 @@ export default defineEventHandler(async (event) => {
   const document = await getDocumentById(id, session.user.id)
   if (!document) throw createError({ statusCode: 404, statusMessage: 'Document non trouvé' })
 
+  const body = await readBody(event).catch(() => ({}))
+  const provider = parseProvider(body?.provider)
+
   await updateDocumentStatus(id, 'pending')
 
-  extractTextFromDocument(id, document.filename).catch((err) => {
+  extractTextFromDocument(id, document.filename, provider).catch((err) => {
     console.error(`Re-extraction failed for document ${id}:`, err)
   })
 
