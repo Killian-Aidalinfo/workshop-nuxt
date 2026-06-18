@@ -7,3 +7,8 @@ apps/**/.env
 uploads/
 *.log
 .DS_Store
+.claude/
+.agents/
+.mcp.json
+skills-lock.json
+apps/**/test-results/

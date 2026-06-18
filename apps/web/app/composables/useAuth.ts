@@ -1,8 +1,6 @@
 import { authClient } from '~/utils/auth-client'
 
 export function useAuth() {
-  const session = authClient.useSession()
-
   async function signIn(email: string, password: string) {
     return authClient.signIn.email({ email, password })
   }
@@ -16,5 +14,5 @@ export function useAuth() {
     await navigateTo('/login')
   }
 
-  return { session, signIn, signUp, signOut }
+  return { signIn, signUp, signOut }
 }

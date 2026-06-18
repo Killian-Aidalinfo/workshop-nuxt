@@ -1,0 +1,18 @@
+{
+  "name": "mastra-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "mastra dev",
+    "build": "mastra build"
+  },
+  "dependencies": {
+    "@ai-sdk/openai-compatible": "^2.0.51",
+    "@mastra/core": "^0.10.0",
+    "ai": "^6.0.207"
+  },
+  "devDependencies": {
+    "mastra": "^0.10.0",
+    "typescript": "^5.5.0"
+  }
+}

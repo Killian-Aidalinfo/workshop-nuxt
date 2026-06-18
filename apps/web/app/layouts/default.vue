@@ -1,5 +1,12 @@
 <script setup lang="ts">
-const { session, signOut } = useAuth()
+import { authClient } from '~/utils/auth-client'
+
+const { data: session } = await authClient.useSession(useFetch)
+
+async function handleSignOut() {
+  await authClient.signOut()
+  await navigateTo('/login')
+}
 </script>
 
 <template>
@@ -7,12 +14,12 @@ const { session, signOut } = useAuth()
     <header class="border-b bg-white dark:bg-gray-800 px-6 py-3 flex items-center justify-between shrink-0">
       <span class="font-bold text-lg">DocExtract</span>
       <div class="flex items-center gap-4">
-        <span class="text-sm text-gray-500">{{ session.data?.user?.email }}</span>
+        <span class="text-sm text-gray-500">{{ session?.user?.email }}</span>
         <UButton
           variant="ghost"
           size="sm"
           data-testid="sign-out-btn"
-          @click="signOut"
+          @click="handleSignOut"
         >
           Déconnexion
         </UButton>
