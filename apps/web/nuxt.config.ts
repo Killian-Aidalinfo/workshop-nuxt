@@ -13,8 +13,12 @@ export default defineNuxtConfig({
   },
   vite: {
     optimizeDeps: {
-      include: ['better-auth/vue'],
+      include: ['better-auth/vue', '@tato30/vue-pdf'],
     },
+  },
+  routeRules: {
+    '/login': { ssr: false },
+    '/register': { ssr: false },
   },
   nitro: {
     alias: {

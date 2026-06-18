@@ -1,5 +1,5 @@
 <script setup lang="ts">
-definePageMeta({ layout: 'auth' })
+definePageMeta({ layout: 'auth', ssr: false })
 
 const { signUp } = useAuth()
 const name = ref('')

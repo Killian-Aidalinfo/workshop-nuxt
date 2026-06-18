@@ -10,7 +10,7 @@ async function handleSignOut() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+  <div class="h-screen bg-gray-50 dark:bg-gray-900 flex flex-col overflow-hidden">
     <header class="border-b bg-white dark:bg-gray-800 px-6 py-3 flex items-center justify-between shrink-0">
       <span class="font-bold text-lg">DocExtract</span>
       <div class="flex items-center gap-4">

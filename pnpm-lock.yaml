@@ -63,6 +63,9 @@ importers:
         specifier: ^3.23.0
         version: 3.25.76
     devDependencies:
+      '@iconify-json/lucide':
+        specifier: ^1.2.113
+        version: 1.2.113
       '@playwright/test':
         specifier: ^1.45.0
         version: 1.61.0
@@ -904,6 +907,9 @@ packages:
     peerDependencies:
       '@hono/node-server': ^1.19.11
       hono: ^4.6.0
+
+  '@iconify-json/lucide@1.2.113':
+    resolution: {integrity: sha512-hfHPXZmLAsZkEfSd4kKRPMRM2HOQz1k11XWtSReEWeecOM+nLtZlfHAzv8nSsrJw2scLz3DKqosNMNXd3mP60Q==}
 
   '@iconify/collections@1.0.697':
     resolution: {integrity: sha512-OHc99jYQmioWfQOTcFualkHAMAcnYpSpQErKL9wB36vg/gqnBlaMQTzLGw3xuzzFoesCj46esE8uDue96DyvOw==}
@@ -6943,6 +6949,10 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+
+  '@iconify-json/lucide@1.2.113':
+    dependencies:
+      '@iconify/types': 2.0.0
 
   '@iconify/collections@1.0.697':
     dependencies:
