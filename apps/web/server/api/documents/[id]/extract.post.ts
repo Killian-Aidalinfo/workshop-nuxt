@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
 
   await updateDocumentStatus(id, 'pending')
 
-  extractTextFromDocument(id, document.filename, document.mimeType).catch((err) => {
+  extractTextFromDocument(id, document.filename).catch((err) => {
     console.error(`Re-extraction failed for document ${id}:`, err)
   })
 

@@ -7,5 +7,6 @@ allowBuilds:
   '@prisma/engines': true
   esbuild: true
   prisma: true
+  canvas: true
   protobufjs: true
   vue-demi: true

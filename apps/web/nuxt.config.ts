@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     openaiApiKey: process.env.OPENAI_API_KEY,
     public: {
       appUrl: process.env.NUXT_PUBLIC_APP_URL || 'http://localhost:3000',
+      mastraUrl: process.env.NUXT_PUBLIC_MASTRA_URL || 'http://localhost:4111',
     },
   },
   vite: {

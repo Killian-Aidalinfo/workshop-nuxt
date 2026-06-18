@@ -49,7 +49,7 @@ export default defineEventHandler(async (event) => {
     size: filePart.data.length,
   })
 
-  extractTextFromDocument(document.id, filename, mimeType).catch((err) => {
+  extractTextFromDocument(document.id, filename).catch((err) => {
     console.error(`Extraction failed for document ${document.id}:`, err)
   })
 

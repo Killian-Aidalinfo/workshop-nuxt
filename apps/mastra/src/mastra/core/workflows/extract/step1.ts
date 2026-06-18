@@ -17,33 +17,29 @@ export const step1 = createStep({
   outputSchema: z.object({
     typeOfImg: classificationSchema,
   }),
-  execute: async ({ inputData, state, setState}) => {
+  execute: async ({ inputData, setState }) => {
     const { urlFile } = inputData;
 
-    const document = await downloadDocument(urlFile);
-    await setState({
-      document: document,
-    });
-    console.log("Document downloaded:", document);
+    const pages = await downloadDocument(urlFile);
+    await setState({ pages });
+
     const response = await classificationAgent.generate(
       [
         {
           role: "user",
           content: [
-            document,
-            { type: "text", text: "Classify this document." },
+            ...pages,
+            { type: "text", text: "Classify this document. Use exactly one of these types: 'id_card' (identity card, carte d'identité, passeport), 'invoice' (invoice, facture, bill), 'delivery_slip' (delivery slip, bon de livraison), 'barcode' (barcode image), 'unknown' (anything else). Provide a confidence score between 0 and 1." },
           ],
         },
       ],
       {
         structuredOutput: { schema: classificationSchema },
-        providerOptions: {
-          scaleway: {
-            reasoningEffort: "none",
-          },
-        },
       },
     );
+
+    console.log("Classification result:", response.object);
+
     return {
       typeOfImg: {
         type: response.object?.type ?? "unknown",

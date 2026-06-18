@@ -24,20 +24,20 @@ const idCardSchema = z.object({
 export const stepIdCard = createStep({
   id: "step-id-card",
   stateSchema: z.object({
-    document: z.any(),
+    pages: z.array(z.any()),
   }),
   outputSchema: z.object({
     idCard: idCardSchema,
   }),
   execute: async ({ state }) => {
-    const { document } = state;
+    const { pages } = state;
 
     const response = await ocrAgent.generate(
       [
         {
           role: "user",
           content: [
-            document,
+            ...pages,
             {
               type: "text",
               text: "Extract all information from this identity card. Include all visible fields: names, birth date and place, nationality, gender, document number, expiry date, issuing authority, address if present, and the MRZ lines at the bottom.",
@@ -52,7 +52,7 @@ export const stepIdCard = createStep({
         },
       },
     );
-
+    console.log("OCR Agent response:", response.object);
     return { idCard: response.object };
   },
 });
