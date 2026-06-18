@@ -1,0 +1,16 @@
+{
+  "name": "workshop-nuxt",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build",
+    "test:unit": "pnpm --filter web test:unit",
+    "test:e2e": "pnpm --filter web test:e2e",
+    "db:migrate": "pnpm --filter web db:migrate",
+    "db:generate": "pnpm --filter web db:generate"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  }
+}
