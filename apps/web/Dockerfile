@@ -7,7 +7,7 @@ RUN npm install -g pnpm@11
 
 # ─── Dependencies ────────────────────────────────────────────────────────────
 FROM base AS deps
-COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml .npmrc ./
 COPY apps/web/package.json ./apps/web/package.json
 COPY apps/mastra/package.json ./apps/mastra/package.json
 RUN mkdir -p packages && pnpm install --frozen-lockfile --filter web...
