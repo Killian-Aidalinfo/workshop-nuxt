@@ -1,6 +1,9 @@
 packages:
   - 'apps/*'
   - 'packages/*'
+pnpm:
+  security:
+    minimumReleaseAge: "0 seconds"
 allowBuilds:
   '@parcel/watcher': true
   '@prisma/client': true
