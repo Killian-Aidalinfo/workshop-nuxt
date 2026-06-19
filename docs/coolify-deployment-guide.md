@@ -42,7 +42,7 @@ Dans Coolify → **Sources** → **Container Registry** → Ajouter :
 | `BETTER_AUTH_SECRET` | ✅ | Chaîne aléatoire 32 chars min (ex: `openssl rand -base64 32`) |
 | `BETTER_AUTH_URL` | ✅ | URL publique de l'app ex. `https://app.mondomaine.fr` |
 | `NUXT_PUBLIC_APP_URL` | ✅ | Même valeur que `BETTER_AUTH_URL` |
-| `NUXT_PUBLIC_MASTRA_URL` | ✅ | URL publique du service mastra ex. `https://mastra.mondomaine.fr` |
+| `NUXT_MASTRA_URL` | ✅ | URL publique du service mastra ex. `https://mastra.mondomaine.fr` |
 | `OPENAI_API_KEY` | ⚠️ | Au moins une clé IA requise |
 | `MISTRAL_API_KEY` | ⚠️ | Alternative à OpenAI |
 | `SCALEWAY_API_KEY` | ⚠️ | Pour OCR Scaleway |

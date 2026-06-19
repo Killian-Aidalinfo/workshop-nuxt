@@ -20,6 +20,8 @@ RUN pnpm --filter mastra-app build
 # ─── Runner ──────────────────────────────────────────────────────────────────
 FROM node:${NODE_VERSION} AS runner
 WORKDIR /app
+# poppler-utils fournit `pdftoppm`, utilisé pour convertir les PDF en images
+RUN apk add --no-cache poppler-utils
 COPY --from=builder /app/apps/mastra/.mastra/output ./
 ENV NODE_ENV=production
 EXPOSE 4111
